@@ -11,8 +11,9 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, HttpUrl
+from typing import Optional, List
+from datetime import date
 
 # Example schemas (replace with your own):
 
@@ -40,6 +41,31 @@ class Product(BaseModel):
 
 # Add your own schemas here:
 # --------------------------------------------------
+
+class JobApplication(BaseModel):
+    """
+    Job applications you have applied to
+    Collection name: "jobapplication"
+    """
+    company: str = Field(..., description="Company name")
+    position: str = Field(..., description="Role or job title")
+    location: Optional[str] = Field(None, description="Job location (City, Country or Remote)")
+    job_link: Optional[str] = Field(None, description="URL to the job posting")
+    source: Optional[str] = Field(None, description="Where you found it (LinkedIn, Referral, etc.)")
+    status: str = Field(
+        "applied",
+        description="Application status",
+    )  # applied, interviewing, offer, rejected, ghosted, saved
+    applied_date: Optional[date] = Field(None, description="Date you applied")
+    follow_up_date: Optional[date] = Field(None, description="Planned follow-up date")
+    salary_min: Optional[float] = Field(None, ge=0, description="Min salary expectation")
+    salary_max: Optional[float] = Field(None, ge=0, description="Max salary expectation")
+    contact_name: Optional[str] = Field(None, description="Recruiter or contact name")
+    contact_email: Optional[str] = Field(None, description="Recruiter or contact email")
+    resume_version: Optional[str] = Field(None, description="Which resume version you sent")
+    priority: Optional[str] = Field("medium", description="low, medium, high, urgent")
+    tags: List[str] = Field(default_factory=list, description="Labels for filtering")
+    notes: Optional[str] = Field(None, description="Any notes about this application")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
